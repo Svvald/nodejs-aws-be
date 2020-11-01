@@ -3,6 +3,8 @@
     "lib": ["es2017"],
     "removeComments": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "sourceMap": true,
