@@ -1,15 +1,22 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import products from '../../assets/mock-products-list.json';
+import { Client } from 'pg';
 import { CORS_HEADERS } from '../../utils/cors-headers';
+import { DB_OPTIONS } from '../../utils/db-options';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   console.log('getProductById invokation with event: ', event);
 
+  const client = new Client(DB_OPTIONS);
+  await client.connect();
+
   try {
     const id = event.pathParameters.productId;
-    const product = products.find(p => p.id === id);
+    const dmlResult = await client.query(`
+      select * from products
+      where id = $1
+    `, [id]);
 
-    if (!product) {
+    if (!dmlResult.rowCount) {
       return {
         statusCode: 404,
         headers: { ...CORS_HEADERS },
@@ -17,7 +24,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
       }
     }
 
-    const responseData = JSON.stringify(product);
+    const responseData = JSON.stringify(dmlResult.rows);
     return {
       statusCode: 200,
       headers: { ...CORS_HEADERS },
@@ -32,5 +39,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
       headers: { ...CORS_HEADERS },
       body: errorData
     }
+  } finally {
+    client.end();
   }
 }
