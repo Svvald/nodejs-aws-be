@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
-import { CORS_HEADERS } from './cors-headers';
-import products from './products-list.json';
+import products from '../../assets/mock-products-list.json';
+import { CORS_HEADERS } from '../../utils/cors-headers';
 
 export const getProductById: APIGatewayProxyHandler = async (event) => {
   console.log('getProductById invokation with event: ', event);
