@@ -12,7 +12,7 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
 
   try {
     const body = JSON.parse(event.body);
-    const { title, description, price, thumbnail } = body;
+    const { title, description, price, count } = body;
 
     // Title is the only field that has NOT NULL constraint in DB and has to be validated
     if (!title) {
@@ -23,19 +23,31 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
       }
     }
 
-    const dmlResult = await client.query(`
-      insert into products(title, description, price, thumbnail)
-      values ($1, $2, $3, $4)
-      returning *
-    `, [title, description, price, thumbnail]);
+    await client.query('begin');
 
-    const responseData = JSON.stringify(dmlResult.rows);
+    const productInsertResult = await client.query(`
+      insert into products(title, description, price)
+      values ($1, $2, $3)
+      returning id
+    `, [title, description, price]);
+    const insertedProductId = productInsertResult.rows[0].id;
+
+    await client.query(`
+      insert into stocks(product_id, count)
+      values ((select id from products where id = $1), $2)
+    `, [insertedProductId, count]);
+
+    await client.query(`commit`);
+
+    const responseData = JSON.stringify({ id: insertedProductId });
     return {
       statusCode: HTTP_CODES.CREATED,
       headers: { ...CORS_HEADERS },
       body: responseData
     }
   } catch (error) {
+    await client.query(`rollback`);
+
     console.log('An error occured while processing event: ', error);
     const errorData = JSON.stringify({
       message: error

@@ -13,8 +13,10 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
   try {
     const id = event.pathParameters.productId;
     const dmlResult = await client.query(`
-      select * from products
-      where id = $1
+      select products.id, count, price, title, description, thumbnail
+      from products left join stocks
+      on products.id = stocks.product_id
+      where products.id = $1
     `, [id]);
 
     if (!dmlResult.rowCount) {
@@ -25,7 +27,7 @@ export const getProductById: APIGatewayProxyHandler = async (event) => {
       }
     }
 
-    const responseData = JSON.stringify(dmlResult.rows);
+    const responseData = JSON.stringify(dmlResult.rows[0]);
     return {
       statusCode: HTTP_CODES.OK,
       headers: { ...CORS_HEADERS },
