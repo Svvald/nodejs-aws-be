@@ -35,32 +35,41 @@ const serverlessConfiguration: Serverless = {
     getProductsList: {
       handler: 'handler.getProductsList',
       events: [{
-          http: {
-            path: 'products',
-            method: 'get',
-            cors: true
-          }
+        http: {
+          path: 'products',
+          method: 'get',
+          cors: true
         }
-      ]
+      }]
     },
 
     getProductById: {
       handler: 'handler.getProductById',
       events: [{
-          http: {
-            path: 'products/{productId}',
-            method: 'get',
-            cors: true,
-            request: {
-              parameters: {
-                paths: {
-                  productId: true
-                }
+        http: {
+          path: 'products/{productId}',
+          method: 'get',
+          cors: true,
+          request: {
+            parameters: {
+              paths: {
+                productId: true
               }
             }
           }
         }
-      ]
+      }]
+    },
+
+    createProduct: {
+      handler: 'handler.createProduct',
+      events: [{
+        http: {
+          path: 'products',
+          method: 'post',
+          cors: true
+        }
+      }]
     }
   }
 }
