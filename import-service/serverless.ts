@@ -55,6 +55,21 @@ const serverlessConfiguration: Serverless = {
           }
         }
       }]
+    },
+
+    importFileParser: {
+      handler: 'handler.importFileParser',
+      events: [{
+        s3: {
+          bucket: 'epam-nodejs-aws-app-files',
+          event: 's3:ObjectCreated:*',
+          rules: [{
+            prefix: 'uploaded/',
+            suffix: ''
+          }],
+          existing: true
+        }
+      }]
     }
   }
 }
