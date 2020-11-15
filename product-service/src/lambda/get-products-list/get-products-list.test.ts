@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import products from '../../assets/mock-products-list.json';
 import { getProductsList } from './get-products-list';
-import products from './products-list.json';
 
 const mockEvent: APIGatewayProxyEvent = {
   path: '',
