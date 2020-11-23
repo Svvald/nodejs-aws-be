@@ -26,9 +26,21 @@ const serverlessConfiguration: Serverless = {
     apiGateway: {
       minimumCompressionSize: 1024
     },
+
     environment: {
-      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
-    }
+      AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SNS_TOPIC_ARN: {
+        Ref: 'SNSTopic'
+      }
+    },
+
+    iamRoleStatements: [{
+      Effect: 'Allow',
+      Action: 'sns:Publish',
+      Resource: [{
+        Ref: 'SNSTopic'
+      }]
+    }]
   },
 
   resources: {
@@ -38,6 +50,24 @@ const serverlessConfiguration: Serverless = {
         Properties: {
           QueueName: 'catalog-items-queue',
           ReceiveMessageWaitTimeSeconds: 20
+        }
+      },
+
+      SNSTopic: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: 'create-product-topic'
+        }
+      },
+
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: 'nc@svvald.me',
+          Protocol: 'email',
+          TopicArn: {
+            Ref: 'SNSTopic'
+          }
         }
       }
     }
