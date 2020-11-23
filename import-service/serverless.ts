@@ -26,6 +26,7 @@ const serverlessConfiguration: Serverless = {
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
+      SQS_URL: 'https://sqs.eu-west-1.amazonaws.com/314054664759/catalog-items-queue'
     },
     iamRoleStatements: [{
       Effect: 'Allow',
@@ -35,6 +36,10 @@ const serverlessConfiguration: Serverless = {
       Effect: 'Allow',
       Action: 's3:*',
       Resource: 'arn:aws:s3:::epam-nodejs-aws-app-files/*'
+    }, {
+      Effect: 'Allow',
+      Action: 'sqs:SendMessage',
+      Resource: 'arn:aws:sqs:eu-west-1:314054664759:catalog-items-queue'
     }]
   },
 

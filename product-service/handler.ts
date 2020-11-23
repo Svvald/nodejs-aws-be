@@ -1,3 +1,4 @@
+import { catalogBatchProcess } from './src/lambda/catalog-batch-process/catalog-batch-process';
 import { createProduct } from './src/lambda/create-product/create-product';
 import { getProductById } from './src/lambda/get-product-by-id/get-product-by-id';
 import { getProductsList } from './src/lambda/get-products-list/get-products-list';
@@ -5,5 +6,6 @@ import { getProductsList } from './src/lambda/get-products-list/get-products-lis
 export {
   getProductsList,
   getProductById,
-  createProduct
+  createProduct,
+  catalogBatchProcess
 };

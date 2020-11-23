@@ -31,6 +31,18 @@ const serverlessConfiguration: Serverless = {
     }
   },
 
+  resources: {
+    Resources: {
+      SQSQueue: {
+        Type: 'AWS::SQS::Queue',
+        Properties: {
+          QueueName: 'catalog-items-queue',
+          ReceiveMessageWaitTimeSeconds: 20
+        }
+      }
+    }
+  },
+
   functions: {
     getProductsList: {
       handler: 'handler.getProductsList',
@@ -68,6 +80,18 @@ const serverlessConfiguration: Serverless = {
           path: 'products',
           method: 'post',
           cors: true
+        }
+      }]
+    },
+
+    catalogBatchProcess: {
+      handler: 'handler.catalogBatchProcess',
+      events: [{
+        sqs: {
+          batchSize: 5,
+          arn: {
+            'Fn::GetAtt': ['SQSQueue', 'Arn']
+          }
         }
       }]
     }

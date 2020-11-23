@@ -59,6 +59,6 @@ export const createProduct: APIGatewayProxyHandler = async (event) => {
       body: errorData
     }
   } finally {
-    client.end();
+    await client.end();
   }
 }
