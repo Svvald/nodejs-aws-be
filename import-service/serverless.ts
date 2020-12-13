@@ -1,4 +1,5 @@
 import type { Serverless } from 'serverless/aws';
+import { ResponseParameters } from "./src/utils/response-parameters";
 
 const serverlessConfiguration: Serverless = {
   service: {
@@ -43,14 +44,45 @@ const serverlessConfiguration: Serverless = {
     }]
   },
 
+  resources: {
+    Resources: {
+      GatewayResponseAccessDenied: {
+        Type: "AWS::ApiGateway::GatewayResponse",
+        Properties: {
+          ResponseParameters: ResponseParameters,
+          ResponseType: "ACCESS_DENIED",
+          RestApiId: {
+            Ref: "ApiGatewayRestApi"
+          }
+        }
+      },
+      GatewayResponseUnauthorized: {
+        Type: "AWS::ApiGateway::GatewayResponse",
+        Properties: {
+          ResponseParameters: ResponseParameters,
+          ResponseType: "UNAUTHORIZED",
+          RestApiId: {
+            Ref: "ApiGatewayRestApi"
+          }
+        }
+      }
+    }
+  },
+
   functions: {
     importProductsFile: {
       handler: 'handler.importProductsFile',
       events: [{
         http: {
-          method: 'get',
+          method: 'put',
           path: 'import',
           cors: true,
+          authorizer: {
+            name: 'basicAuthorizer',
+            arn: 'arn:aws:lambda:eu-west-1:314054664759:function:authorization-service-dev-basicAuthorizer',
+            type: 'token',
+            resultTtlInSeconds: 0
+          },
           request: {
             parameters: {
               querystrings: {

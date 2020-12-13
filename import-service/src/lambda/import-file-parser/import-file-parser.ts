@@ -30,7 +30,7 @@ class SQSStream extends Transform {
 }
 
 export const importFileParser: S3Handler = (event) => {
-  console.log('importFileParser invokation with event: ', event);
+  console.log('importFileParser invocation with event: ', event);
 
   try {
     const s3 = new S3({ region: DEFAULT_REGION });
@@ -44,7 +44,6 @@ export const importFileParser: S3Handler = (event) => {
         Key: source
       };
 
-      const fileStream = s3.getObject(params).createReadStream();
       const csvStream = csvParser({
         mapValues: ({ value }) => {
           return isNaN(value) ? value : Number(value)
@@ -79,6 +78,6 @@ export const importFileParser: S3Handler = (event) => {
         });
     });
   } catch (error) {
-    console.log('An error occured while processing event: ', error);
+    console.log('An error occurred while processing event: ', error);
   }
 }

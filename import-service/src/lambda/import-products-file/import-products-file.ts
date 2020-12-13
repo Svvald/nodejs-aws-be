@@ -1,19 +1,18 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
-import { BUCKET_NAME, DEFAULT_REGION } from '../../utils/configs';
-import { CORS_HEADERS } from '../../utils/cors-headers';
-import { HTTP_CODES } from '../../utils/http-codes';
+import {APIGatewayProxyHandler} from 'aws-lambda';
+import {S3} from 'aws-sdk';
+import {BUCKET_NAME, DEFAULT_REGION} from '../../utils/configs';
+import {CORS_HEADERS} from '../../utils/cors-headers';
+import {HTTP_CODES} from '../../utils/http-codes';
 
 export const importProductsFile: APIGatewayProxyHandler = async (event) => {
-  console.log('importProductsFile invokation with event: ', event);
+  console.log('importProductsFile invocation with event: ', event);
 
   try {
     const s3 = new S3({ region: DEFAULT_REGION });
 
-    const fileName = event.queryStringParameters.name;
     const signedUrlParams = {
       Bucket: BUCKET_NAME,
-      Key: `uploaded/${fileName}`,
+      Key: `uploaded/${(event.queryStringParameters.name)}`,
       Expires: 60,
       ContentType: 'text/csv'
     }
@@ -26,7 +25,7 @@ export const importProductsFile: APIGatewayProxyHandler = async (event) => {
       body: JSON.stringify(signedUrl)
     };
   } catch (error) {
-    console.log('An error occured while processing event: ', error);
+    console.log('An error occurred while processing event: ', error);
     const errorData = JSON.stringify({
       message: error
     });
